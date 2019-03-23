@@ -164,3 +164,18 @@ body {
   outline: none;
   padding-bottom: 10px;
 }
+
+.checked-box {
+  width: 15px;
+  height: 15px;
+  border: 1px solid black;
+  vertical-align: middle;
+  right: 30px;
+  position: absolute;
+  cursor: pointer;
+}
+
+.checked-sign {
+  width: 13px;
+  height: 13px;
+}

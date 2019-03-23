@@ -5,7 +5,7 @@ const toDosArray = localStorage.getItem("todos")
 
 const input = document.querySelector("#type-task");
 
-function addToDo(task) {
+function addToDo(toDo) {
   const taskDiv = document.createElement("div");
   taskDiv.classList.add("task");
   const paragraph = document.createElement("p");
@@ -13,18 +13,35 @@ function addToDo(task) {
   deleteBtn.classList.add("delete-btn");
   deleteBtn.setAttribute("src", "/assets/error.png");
 
-  paragraph.innerHTML = task;
+  const checkedBox = document.createElement("div");
+  checkedBox.classList.add("checked-box");
+
+  if (toDo.completed) {
+    const checkedSign = document.createElement("img");
+    checkedSign.classList.add("checked-sign");
+    checkedSign.setAttribute("src", "/assets/checked.png");
+    checkedBox.append(checkedSign);
+  }
+
+  paragraph.innerHTML = toDo.label;
 
   taskDiv.append(paragraph);
   taskDiv.append(deleteBtn);
+
+  taskDiv.append(checkedBox);
   document.querySelector("#todo-container").append(taskDiv);
 }
 
 input.addEventListener("keydown", function(event) {
   if (event.key.toLowerCase() == "enter") {
-    toDosArray.push(this.value);
+    const toDo = {
+      label: this.value,
+      completed: false
+    };
+    toDosArray.push(toDo);
+
     localStorage.setItem("todos", JSON.stringify(toDosArray));
-    addToDo(this.value);
+    addToDo(toDo);
     this.value = null;
   }
 });
@@ -42,5 +59,28 @@ document.addEventListener("click", function(event) {
 
     toDosArray.splice(indexTask, 1);
     localStorage.setItem("todos", JSON.stringify(toDosArray));
+  }
+
+  if (event.target && event.target.classList.contains("checked-box")) {
+    const checkedBox = event.target;
+    const checkedSign = document.createElement("img");
+    checkedSign.classList.add("checked-sign");
+    checkedSign.setAttribute("src", "/assets/checked.png");
+    checkedBox.append(checkedSign);
+
+    const todosHtml = event.target.parentElement.parentElement.children;
+    const nodes = Array.prototype.slice.call(todosHtml);
+    const indexTask = nodes.indexOf(event.target.parentElement);
+    toDosArray[indexTask].completed = true;
+    localStorage.setItem("todos", JSON.stringify(toDosArray));
+  }
+  if (event.target && event.target.classList.contains("checked-sign")) {
+    const todosHtml =
+      event.target.parentElement.parentElement.parentElement.children;
+    const nodes = Array.prototype.slice.call(todosHtml);
+    const indexTask = nodes.indexOf(event.target.parentElement.parentElement);
+    toDosArray[indexTask].completed = false;
+    localStorage.setItem("todos", JSON.stringify(toDosArray));
+    event.target.remove();
   }
 });
